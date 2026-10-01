@@ -295,14 +295,14 @@
   <section class="right" id="gpu" data-key="gpu" data-name="Graphics">
     <article class="card" style="--accent:#76b900">
       <span class="eyebrow">03 — Graphics</span>
-      <h3>GeForce RTX 5060</h3>
-      <div class="maker">NVIDIA · BLACKWELL</div>
+      <h3>GeForce RTX 5060 Gaming OC</h3>
+      <div class="maker">MSI · NVIDIA BLACKWELL</div>
       <div class="hero-stat"><b>8 GB</b><span>GDDR7 VIDEO MEMORY</span></div>
-      <p>This is the card that renders the games. Blackwell architecture with GDDR7, 5th-gen Tensor cores and DLSS 4 Multi Frame Generation.</p>
+      <p>MSI's Gaming OC version of the RTX 5060, with a factory overclock, twin fans and a lit MSI dragon logo. Blackwell architecture with GDDR7 and DLSS 4 Multi Frame Generation.</p>
       <dl class="specs">
         <div><dt>CUDA cores</dt><dd>3,840</dd></div>
         <div><dt>Memory bus</dt><dd>128-bit</dd></div>
-        <div><dt>Boost clock</dt><dd>~2.50 GHz</dd></div>
+        <div><dt>Boost clock</dt><dd>Factory OC</dd></div>
         <div><dt>Board power</dt><dd>145 W</dd></div>
         <div><dt>Interface</dt><dd>PCIe 5.0 x8</dd></div>
         <div><dt>Upscaling</dt><dd>DLSS 4</dd></div>
@@ -333,8 +333,8 @@
       <span class="eyebrow">05 — Memory</span>
       <h3>Vengeance LPX</h3>
       <div class="maker">CORSAIR · DDR4 · 2 × 8 GB</div>
-      <div class="hero-stat"><b>16 GB</b><span>DUAL CHANNEL</span></div>
-      <p>Two low-profile sticks from two different kits, installed in slots A2 and B2 for dual-channel.</p>
+      <div class="hero-stat"><b>16 GB</b><span>DDR4 · TWO STICKS</span></div>
+      <p>One black, one red: two low-profile sticks from two different kits.</p>
       <dl class="specs">
         <div><dt>Stick A</dt><dd>CMK8GX4M1A2400C14</dd></div>
         <div><dt>Stick B</dt><dd>CMK16GX4M2B3200C16</dd></div>
@@ -351,7 +351,7 @@
       <h3>XPG SX8200 Pro</h3>
       <div class="maker">ADATA · M.2 2280 · NVMe</div>
       <div class="hero-stat"><b>3,500</b><span>MB/s SEQUENTIAL READ</span></div>
-      <p>A thin M.2 stick that holds Windows, the games and everything else, sitting right under the CPU socket.</p>
+      <p>A thin M.2 stick that holds Windows, the games and everything else, tucked in the slot just under the graphics card.</p>
       <dl class="specs">
         <div><dt>Capacity</dt><dd>512 GB</dd></div>
         <div><dt>Interface</dt><dd>PCIe 3.0 x4</dd></div>
@@ -395,16 +395,18 @@
           <thead><tr><th>Part</th><th>Model</th><th>Key spec</th></tr></thead>
           <tbody>
             <tr><td>CPU</td><td>AMD Ryzen 7 5700X</td><td>4.6 GHz boost</td></tr>
-            <tr><td>GPU</td><td>NVIDIA GeForce RTX 5060</td><td>8 GB GDDR7</td></tr>
+            <tr><td>GPU</td><td>MSI GeForce RTX 5060 8G Gaming OC</td><td>8 GB GDDR7</td></tr>
             <tr><td>Board</td><td>ASUS ROG Strix B550-A Gaming</td><td>AM4 · ATX</td></tr>
             <tr><td>Memory</td><td>Corsair Vengeance LPX 2&nbsp;×&nbsp;8&nbsp;GB</td><td>DDR4</td></tr>
             <tr><td>Storage</td><td>ADATA XPG SX8200 Pro 512 GB</td><td>NVMe Gen3</td></tr>
             <tr><td>Network</td><td>Intel I225-V + AX210</td><td>2.5G · Wi-Fi 6E</td></tr>
             <tr><td>Display</td><td>MSI G32C4 E2 31.5″</td><td>170 Hz</td></tr>
+            <tr><td>Cooler</td><td>AMD Wraith stock cooler</td><td>Low profile</td></tr>
+            <tr><td>Case</td><td>Corsair mid-tower, glass side</td><td>3 ARGB intake</td></tr>
             <tr><td>OS</td><td>Windows 11 Pro</td><td>64-bit</td></tr>
           </tbody>
         </table>
-        <footer>Parts read from Windows device info. Cooler, PSU and case can't be detected from software, so the 3D model shows generic ones.</footer>
+        <footer>Parts read from Windows device info and photos of the build. The power supply is hidden under the shroud, so it's modelled generically.</footer>
       </article>
     </div>
   </section>
@@ -598,13 +600,51 @@ const silver = 0xc9ced6, black = 0x111317, steel = 0x1a1d23;
   box(bottom, 42, 0.4, 21.8, bm);
   for (const x of [-17, 17]) for (const z of [-8, 8]) box(bottom, 4, 1.2, 3, mat(bottom, 0x050608), x, -0.8, z);
 
-  const front = part('front', { name: 'Case', sub: 'Front panel', kind: 'case', pos: [21.2, 2.5, 1.5], off: [24, 0, 0], delay: 0 });
+  const front = part('front', { name: 'Corsair case', sub: 'Front panel', kind: 'case', pos: [21.2, 2.5, 1.5], off: [24, 0, 0], delay: 0 });
   box(front, 0.5, 46, 21.8, mat(front, 0x0e1015, { metal: 0.4, rough: 0.35 }));
-  box(front, 0.55, 40, 0.35, rgb(front, 0.0, 3), 0.05, 0, 9.6);
+  // Corsair's "7L" cut-out pattern, lit from behind by the three intake fans
+  const fanSpots = [235, 528, 822];          // fan centres in canvas px (panel is 46 cm tall → 1080 px)
+  decal(front, 20.6, 44, textTex(512, 1080, (g, w, h) => {
+    g.lineWidth = 7; g.lineJoin = 'miter'; g.lineCap = 'butt';
+    const logo = { x: w / 2, y: 905 };
+    for (let row = 0, y = 70; y < 1000; row++, y += 40) {
+      for (let x = 34 + (row % 2) * 20; x < w - 70; x += 54) {
+        if (Math.hypot(x + 16 - logo.x, y + 13 - logo.y) < 70) continue;
+        let b = 0, hue = 0;
+        fanSpots.forEach((fy, i) => {
+          const d = Math.hypot(x + 16 - w / 2, y + 13 - fy), k = Math.exp(-(d * d) / (2 * 95 * 95));
+          if (k > b) { b = k; hue = (Math.atan2(y - fy, x - w / 2) / (Math.PI * 2)) * 360 + 180 + i * 70; }
+        });
+        g.strokeStyle = b < 0.22 ? '#07080a' : `hsl(${hue % 360}, 85%, ${18 + b * 52}%)`;
+        const flip = row % 2 ? -1 : 1, cx = x + 16;
+        g.beginPath();
+        g.moveTo(cx - 16 * flip, y); g.lineTo(cx + 6 * flip, y);
+        g.lineTo(cx - 6 * flip, y + 26); g.lineTo(cx + 16 * flip, y + 26);
+        g.stroke();
+      }
+    }
+    // Corsair sails
+    g.fillStyle = '#c9ccd2';
+    for (let i = 0; i < 3; i++) {
+      const x0 = logo.x - 26 + i * 15;
+      g.beginPath(); g.moveTo(x0, logo.y + 18); g.quadraticCurveTo(x0 + 6, logo.y - 6 - i * 4, x0 + 20, logo.y - 16 - i * 2);
+      g.lineTo(x0 + 12, logo.y + 18); g.closePath(); g.fill();
+    }
+  }), { pos: [0.27, 0, 0], rot: [0, Math.PI / 2, 0], glow: 1.5 });
 
   const rear = part('rear', { name: 'Case', sub: 'Rear panel', kind: 'case', pos: [-21.2, 2.5, 1.5], off: [-20, 0, 0], delay: 0.05 });
   box(rear, 0.4, 46, 21.8, mat(rear, 0x0c0e12, { metal: 0.6, rough: 0.5 }));
   for (let i = 0; i < 7; i++) box(rear, 0.42, 0.9, 12, mat(rear, 0x050608), 0, 0.6 - i * 1.6, 2);
+
+  // PSU shroud (the "basement") with a perforated top
+  const shroud = part('shroud', { name: 'Corsair case', sub: 'PSU shroud', kind: 'case', pos: [0, -16.1, 1.5], off: [0, -7, 16], delay: 0.08 });
+  const sm = mat(shroud, 0x0c0e12, { metal: 0.55, rough: 0.5 });
+  box(shroud, 41.6, 0.35, 21.4, sm, 0, 4.6, 0);
+  box(shroud, 41.6, 9.2, 0.35, sm, 0, 0, 10.6);
+  decal(shroud, 24, 12, textTex(512, 256, (g) => {
+    g.fillStyle = '#050608';
+    for (let y = 0; y < 18; y++) for (let x = 0; x < 40; x++) { g.beginPath(); g.arc(8 + x * 12.6 + (y % 2) * 6, 8 + y * 13.5, 3.6, 0, Math.PI * 2); g.fill(); }
+  }), { pos: [-6, 4.8, -1], rot: [-Math.PI / 2, 0, 0] });
 
   const glass = part('glass', { name: 'Case', sub: 'Tempered glass side panel', kind: 'glass', pos: [0, 2.5, 12.6], off: [0, 4, 34], delay: 0, fade: 0.85 });
   box(glass, 42, 46, 0.3, mat(glass, 0x9fc3ff, { metal: 0.9, rough: 0.05, opacity: 0.07 }));
@@ -628,6 +668,7 @@ const MB = new THREE.Vector3(-7, 6, -8.7);
     g.font = `600 110px ${SG}`; g.fillText('STRIX', 30, 280);
     g.fillStyle = '#ff2a3a'; g.fillRect(420, 70, 12, 120);
     g.fillStyle = '#5a606b'; g.font = `500 50px ${JB}`; g.fillText('B550-A GAMING', 470, 130);
+    g.font = `500 40px ${JB}`; g.fillText('DARE TO PLAY', 470, 280);
   }), { pos: [-10.2, 10, 3.31], rot: [0, 0, Math.PI / 2] });
   box(mb, 9, 2.2, 2.2, alu, -2.6, 13.6, 1.2);                       // VRM top
   box(mb, 2.2, 8.2, 2.2, alu, -7.6, 7.2, 1.2);                      // VRM left
@@ -647,7 +688,8 @@ const MB = new THREE.Vector3(-7, 6, -8.7);
   box(mb, 8.9, 0.75, 1.1, metalSlot, -4.6, -1.5, 0.6);              // x16 (armored)
   box(mb, 8.9, 0.75, 1.1, slot, -4.6, -10.5, 0.6);                  // x16 #2
   for (const y of [-5, -7.7]) box(mb, 2.5, 0.75, 1.1, slot, -9.3, y, 0.6);
-  box(mb, 7, 2.4, 0.9, alu, -3.6, -4.2, 0.55);                      // M.2 #2 shield
+  box(mb, 7.4, 2.5, 0.9, white, -2, 2.6, 0.55);                     // top M.2 heatsink (slot unused)
+  for (let i = 0; i < 3; i++) box(mb, 6.8, 0.08, 0.04, mat(mb, 0x3a3e45), -2, 2.1 + i * 0.5, 1.01);
   box(mb, 6.4, 5.2, 1.3, white, 6, -9, 0.75);                       // chipset heatsink
   box(mb, 4.6, 0.18, 0.2, rgb(mb, 0.35, 3), 6, -6.3, 1.45);
   box(mb, 1.2, 5.6, 1.6, mat(mb, 0x0b0c0f), 11.3, 4, 0.9);         // 24-pin
@@ -676,34 +718,51 @@ const MB = new THREE.Vector3(-7, 6, -8.7);
   box(cpu, 0.22, 0.22, 0.05, gold, -1.75, -1.75, 0.1);
 }
 
-// Cooler (generic tower — model not detectable)
+// Cooler — AMD Wraith-style low-profile stock cooler (from the photos)
 {
-  const cool = part('cooler', { name: 'CPU cooler', sub: 'Tower air cooler (generic)', label: 'Cooler', pos: [MB.x - 3, MB.y + 7.5, -7.6], off: [0, 6, 22], delay: 0.15, wobble: [0.25, -0.35, 0] });
-  box(cool, 4, 4, 0.8, mat(cool, 0xb87333, { metal: 1, rough: 0.3 }), 0, 0, 0.4);
-  const pipe = mat(cool, 0xc07a3c, { metal: 1, rough: 0.25 });
-  const pg = new THREE.CylinderGeometry(0.3, 0.3, 13.6, 14);
-  for (const x of [-1.2, -0.4, 0.4, 1.2]) { const c = new THREE.Mesh(pg, pipe); c.rotation.x = Math.PI / 2; c.position.set(x, 0, 7.4); cool.group.add(c); }
-  const fin = mat(cool, 0xd0d4da, { metal: 0.95, rough: 0.28 });
-  for (let i = 0; i < 34; i++) box(cool, 5, 12, 0.07, fin, 0, 0, 1.9 + i * 0.35);
-  box(cool, 5.3, 12.3, 0.45, mat(cool, 0x101216, { metal: 0.6, rough: 0.35 }), 0, 0, 14.0);
-  box(cool, 0.25, 10.5, 0.1, rgb(cool, 0.15, 3), 2.0, 0, 14.28);
-  const f = makeFan(cool, 12, { phase: 0.15 }); f.rotation.y = Math.PI / 2; f.position.set(3.85, 0, 7.6);
+  const cool = part('cooler', { name: 'AMD Wraith cooler', sub: 'Low-profile stock air cooler', label: 'Cooler', pos: [MB.x - 3, MB.y + 7.5, -7.6], off: [0, 5, 17], delay: 0.15, wobble: [0.25, -0.35, 0] });
+  const alu = mat(cool, 0x8d939c, { metal: 0.95, rough: 0.35 });
+  box(cool, 4, 4, 0.6, mat(cool, 0xa8adb5, { metal: 1, rough: 0.25 }), 0, 0, 0.3);
+  // radial aluminium fins
+  const finG = new THREE.BoxGeometry(4.2, 0.12, 2.4);
+  for (let i = 0; i < 40; i++) {
+    const a = (i / 40) * Math.PI * 2, fin = new THREE.Mesh(finG, alu);
+    fin.position.set(Math.cos(a) * 2.6, Math.sin(a) * 2.6, 1.8); fin.rotation.z = a + 0.35;
+    cool.group.add(fin);
+  }
+  const black = mat(cool, 0x16181d, { metal: 0.3, rough: 0.55 });
+  black.side = THREE.DoubleSide;
+  const shell = new THREE.Mesh(new THREE.CylinderGeometry(5.1, 5.1, 2.4, 64, 1, true), black);
+  shell.rotation.x = Math.PI / 2; shell.position.z = 3.9; cool.group.add(shell);
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(5.0, 0.22, 10, 64), black);
+  lip.position.z = 5.1; cool.group.add(lip);
+  for (const a of [0.25, 1.82, 3.39, 4.96]) box(cool, 1.8, 1.0, 0.6, black, Math.cos(a) * 5.2, Math.sin(a) * 5.2, 3.0); // mounting ears
+  const f = makeFan(cool, 9.6, { depth: 1.4, frame: false, ring: false, blades: 9 });
+  f.position.z = 4.4;
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.75, 0.2, 40), mat(cool, 0xd9dbe0, { metal: 0.1, rough: 0.5 }));
+  cap.rotation.x = Math.PI / 2; cap.position.z = 5.2; cool.group.add(cap);
+  // "AMD" printed on the shroud edge, facing the glass
+  decal(cool, 2.4, 0.9, textTex(256, 96, (g) => { g.fillStyle = '#f2f2f2'; g.font = `700 76px ${SG}`; g.fillText('AMD', 22, 50); }),
+    { pos: [3.95, -3.25, 5.36], rot: [0, 0, 0.88] });
 }
 
 // Memory
+// one black stick and one red stick, as in the photos
 const ramDefs = [
-  { id: 'ramA', x: MB.x + 4.7, off: [9, 3, 10], delay: 0.3, sub: 'CMK8GX4M1A2400C14 · 8 GB' },
-  { id: 'ramB', x: MB.x + 6.5, off: [14, 3, 15], delay: 0.36, sub: 'CMK16GX4M2B3200C16 · 8 GB' },
+  { id: 'ramA', x: MB.x + 4.7, off: [9, 3, 10], delay: 0.3, color: 0x121418, ink: '#d9dce2', accent: '#ff5a1f', sub: 'Black · 8 GB DDR4' },
+  { id: 'ramB', x: MB.x + 6.5, off: [14, 3, 15], delay: 0.36, color: 0xa3161c, ink: '#f4f4f4', accent: '#111317', sub: 'Red · 8 GB DDR4' },
 ];
 for (const d of ramDefs) {
   const r = part(d.id, { name: 'Corsair Vengeance LPX', sub: d.sub, label: d.id === 'ramB' ? 'Memory' : null, section: 'memory', pos: [d.x, MB.y + 7.5, -6.85], off: d.off, delay: d.delay, wobble: [0, 0.3, 0.15] });
-  box(r, 0.72, 13.3, 3.1, mat(r, 0x121418, { metal: 0.55, rough: 0.38 }));
-  for (let i = 0; i < 3; i++) box(r, 0.78, 13.1, 0.14, mat(r, 0x2a2e36, { metal: 0.8, rough: 0.3 }), 0, 0, 1.0 + i * 0.22);
+  box(r, 0.72, 13.3, 3.1, mat(r, d.color, { metal: 0.55, rough: 0.38 }));
+  // LPX's castellated top edge
+  const ridge = mat(r, d.color, { metal: 0.6, rough: 0.35 });
+  for (let i = 0; i < 16; i++) box(r, 0.78, 0.45, 0.35, ridge, 0, -6.2 + i * 0.83, 1.68);
   const lpx = textTex(1024, 220, (g, w, h) => {
-    g.fillStyle = '#d9dce2';
-    g.font = `700 92px ${SG}`; g.fillText('VENGEANCE', 40, 90);
-    g.fillStyle = '#ff5a1f'; g.fillText('LPX', 560, 90);
-    g.fillStyle = '#8b919d'; g.font = `500 34px ${JB}`; g.fillText('DDR4 · 8GB · CORSAIR', 44, 170);
+    g.fillStyle = d.ink;
+    g.font = `700 92px ${SG}`; g.fillText('CORSAIR', 40, 90);
+    g.fillStyle = d.accent; g.font = `600 60px ${SG}`; g.fillText('VENGEANCE LPX', 470, 84);
+    g.fillStyle = d.ink; g.globalAlpha = 0.6; g.font = `500 34px ${JB}`; g.fillText('DDR4 · 8GB', 44, 170);
   });
   // Ry·Rz: text runs up the stick, facing +x
   decal(r, 12, 2.6, lpx, { pos: [0.37, 0, 0.1], rot: [0, Math.PI / 2, Math.PI / 2], order: 'YXZ' });
@@ -712,7 +771,8 @@ for (const d of ramDefs) {
 
 // NVMe SSD
 {
-  const s = part('ssd', { name: 'ADATA XPG SX8200 Pro', sub: '512 GB NVMe SSD', label: 'SSD', section: 'storage', pos: [MB.x - 2, MB.y + 2.6, -8.45], off: [-6, -1, 13], delay: 0.32, wobble: [0.4, 0.3, 0.2] });
+  // sits in the lower M.2 slot, just under the graphics card
+  const s = part('ssd', { name: 'ADATA XPG SX8200 Pro', sub: '512 GB NVMe SSD', label: 'SSD', section: 'storage', pos: [MB.x - 2, MB.y - 6.6, -8.45], off: [-6, -3, 13], delay: 0.32, wobble: [0.4, 0.3, 0.2] });
   box(s, 8, 2.2, 0.12, mat(s, 0x0f3d2a, { rough: 0.6 }));
   box(s, 7.4, 2.0, 0.06, mat(s, 0x0d0e11, { metal: 0.4, rough: 0.35 }), 0.1, 0, 0.12);
   box(s, 7.4, 0.28, 0.07, mat(s, 0xd42020, { emissive: 0xff2a2a, ei: 0.9 }), 0.1, -0.55, 0.13);
@@ -726,24 +786,41 @@ for (const d of ramDefs) {
 
 // GPU — spans x[-19.5,4.5], y[0.5,4.5], z[-8.4,2.6]
 {
-  const g = part('gpu', { name: 'NVIDIA GeForce RTX 5060', sub: 'Graphics · 8 GB GDDR7', label: 'Graphics card', section: 'gpu', pos: [-7.5, 2.5, -2.9], off: [8, -12, 15], delay: 0.2, wobble: [-0.3, 0.25, 0.1] });
-  const shroud = mat(g, 0x101216, { metal: 0.5, rough: 0.42 });
-  box(g, 24, 0.25, 11, mat(g, 0x2a2e35, { metal: 0.85, rough: 0.3 }), 0, 1.85, 0);      // backplate
-  box(g, 23.6, 0.14, 10.6, mat(g, 0x0f2a1c, { rough: 0.7 }), 0, 1.65, 0);               // pcb
-  const finM = mat(g, 0x9aa0a8, { metal: 0.95, rough: 0.35 });
+  const g = part('gpu', { name: 'MSI GeForce RTX 5060 8G Gaming OC', sub: 'Graphics · 8 GB GDDR7', label: 'Graphics card', section: 'gpu', pos: [-7.5, 2.5, -2.9], off: [8, -12, 15], delay: 0.2, wobble: [-0.3, 0.25, 0.1] });
+  const shroud = mat(g, 0x0f1013, { metal: 0.45, rough: 0.5 });
+  const gunmetal = mat(g, 0x2b2e34, { metal: 0.85, rough: 0.35 });
+  box(g, 24, 0.25, 11, mat(g, 0x17191d, { metal: 0.8, rough: 0.4 }), 0, 1.85, 0);      // backplate
+  // MSI dragon + GEFORCE RTX printed on the backplate
+  decal(g, 22, 10, textTex(1024, 470, (c) => {
+    c.fillStyle = '#4a4f58'; c.font = `700 64px ${SG}`; c.fillText('GEFORCE RTX', 40, 70);
+    c.strokeStyle = '#3a3e46'; c.lineWidth = 10;
+    c.beginPath(); c.arc(760, 280, 120, Math.PI * 0.9, Math.PI * 2.1); c.stroke();          // stylised dragon curl
+    c.beginPath(); c.moveTo(650, 260); c.quadraticCurveTo(760, 120, 900, 220); c.stroke();
+  }), { pos: [0, 1.99, 0], rot: [-Math.PI / 2, 0, 0] });
+  box(g, 23.6, 0.14, 10.6, mat(g, 0x0c0d10, { rough: 0.7 }), 0, 1.65, 0);               // pcb
+  const finM = mat(g, 0x5f646c, { metal: 0.95, rough: 0.4 });
   for (let i = 0; i < 40; i++) box(g, 0.08, 1.5, 10, finM, -10.4 + i * 0.53, 0.75, 0);
   box(g, 24, 1.0, 11, shroud, 0, -0.55, 0);
-  box(g, 24.2, 0.2, 11.2, mat(g, 0x8c929b, { metal: 1, rough: 0.25 }), 0, -1.12, 0);    // trim
+  // angular gunmetal accents on the shroud, MSI Gaming style
+  box(g, 6, 0.12, 1.4, gunmetal, -8.5, -1.12, 4.6);
+  box(g, 6, 0.12, 1.4, gunmetal, 8.5, -1.12, -4.6);
   for (const x of [-5.6, 5.6]) {
     const f = makeFan(g, 9.4, { depth: 0.8, frame: false, ring: false, blades: 11 });
     f.rotation.x = Math.PI / 2; f.position.set(x, -1.5, 0);
-    const r = new THREE.Mesh(new THREE.TorusGeometry(4.85, 0.16, 8, 64), mat(g, 0xbfc4cc, { metal: 1, rough: 0.2 }));
+    const r = new THREE.Mesh(new THREE.TorusGeometry(4.85, 0.16, 8, 64), gunmetal);
     r.rotation.x = Math.PI / 2; r.position.set(x, -1.25, 0); g.group.add(r);
   }
-  box(g, 11, 0.32, 0.12, mat(g, 0x76b900, { emissive: 0x76b900, ei: 2.4 }), 4.5, 0.1, 5.56);  // light bar
-  decal(g, 7.5, 0.95, textTex(1024, 130, (c) => {
-    c.fillStyle = '#ffffff'; c.font = `700 92px ${SG}`; c.fillText('GEFORCE RTX', 8, 68);
-  }), { pos: [-6.2, -0.55, 5.52], glow: 1.4 });
+  // side facing the glass: lit MSI dragon logo + GEFORCE RTX plate
+  decal(g, 4.6, 1.05, textTex(512, 118, (c) => {
+    c.fillStyle = '#ffffff';
+    c.beginPath(); c.moveTo(14, 84); c.quadraticCurveTo(40, 10, 118, 30); c.quadraticCurveTo(70, 44, 60, 92); c.closePath(); c.fill(); // dragon
+    c.font = `700 92px ${SG}`; c.fillText('msi', 150, 68);
+  }), { pos: [-8.3, -0.55, 5.52], glow: 2.2 });
+  rgbMats.push(g.mats[g.mats.length - 1]); g.mats[g.mats.length - 1].userData.phase = 0.3; // logo cycles with the case RGB
+  box(g, 8.2, 0.9, 0.12, mat(g, 0x1a1c20, { metal: 0.6, rough: 0.4 }), 3.6, -0.55, 5.52);
+  decal(g, 7.6, 0.8, textTex(1024, 108, (c) => {
+    c.fillStyle = '#f2f2f2'; c.font = `700 88px ${SG}`; c.fillText('GEFORCE RTX', 20, 60);
+  }), { pos: [3.6, -0.55, 5.59] });
   box(g, 0.15, 4.4, 12.2, mat(g, silver, { metal: 1, rough: 0.3 }), -12.1, 0.2, -0.3);      // bracket
   box(g, 8, 0.12, 0.9, mat(g, 0xd4a64a, { metal: 1, rough: 0.3 }), -4.5, 1.65, -5.85);     // fingers
   box(g, 1.8, 0.9, 1.3, mat(g, 0x0a0b0d), 8.5, 2.2, 3.4);                                  // 8-pin
@@ -751,7 +828,7 @@ for (const d of ramDefs) {
 
 // PSU (generic)
 {
-  const p = part('psu', { name: 'Power supply', sub: 'ATX PSU (generic)', label: 'PSU', pos: [-13.3, -16.3, 1.5], off: [-8, -12, 8], delay: 0.12, wobble: [0, 0.3, 0] });
+  const p = part('psu', { name: 'Power supply', sub: 'Under the shroud (model unknown)', label: 'PSU', pos: [-13.3, -16.3, 1.5], off: [-8, -12, 8], delay: 0.12, wobble: [0, 0.3, 0] });
   box(p, 15, 8.6, 14, mat(p, 0x121418, { metal: 0.55, rough: 0.45 }));
   box(p, 8, 3, 0.06, mat(p, 0x8c929b, { metal: 0.9, rough: 0.3 }), 1.5, 0.5, 7.03);
   box(p, 8, 0.2, 0.08, rgb(p, 0.7, 2), 1.5, -1.6, 7.04);
@@ -766,8 +843,13 @@ fanYs.forEach((y, i) => {
   makeFan(f, 12, { phase: i * 0.12 }).rotation.y = -Math.PI / 2;
 });
 {
-  const f = part('fanR', { name: 'Exhaust fan', sub: '120 mm ARGB', kind: 'fan', pos: [-19.6, 15.5, 1.5], off: [-11, 3, 0], delay: 0.08 });
-  makeFan(f, 12, { phase: 0.5 }).rotation.y = Math.PI / 2;
+  const f = part('fanR', { name: 'Antec exhaust fan', sub: '120 mm', kind: 'fan', pos: [-19.6, 15.5, 1.5], off: [-11, 3, 0], delay: 0.08 });
+  const fg = makeFan(f, 12, { ring: false });
+  fg.rotation.y = Math.PI / 2;
+  decal(f, 3.6, 3.6, textTex(256, 256, (g) => {
+    g.fillStyle = '#2a2d33'; g.beginPath(); g.arc(128, 128, 124, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#c9ccd2'; g.font = `700 64px ${SG}`; g.textAlign = 'center'; g.fillText('Antec', 128, 128);
+  }), { pos: [0, 0, 1.12], parent: fg });
 }
 
 // Monitor — MSI G32C4 E2, 31.5" 1500R curve. Only shown on the display stage.
